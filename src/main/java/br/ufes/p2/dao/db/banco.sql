@@ -1,0 +1,63 @@
+BEGIN TRANSACTION;
+
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE Imagem (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome VARCHAR(255) NOT NULL,
+    diretorio VARCHAR(255) NOT NULL,
+    excluida BOOLEAN NOT NULL
+);
+
+CREATE TABLE Usuario (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome VARCHAR(255) NOT NULL,
+    tipo VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Login (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    usuario VARCHAR(255) NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    idUsuario VARCHAR(255) NOT NULL,
+    FOREIGN KEY(idUsuario) REFERENCES Usuario(id) ON DELETE CASCADE
+);
+
+CREATE TABLE Permissao (
+    idImagem INTEGER,
+    idUsuario INTEGER,
+    descricao VARCHAR(255) NOT NULL,
+    PRIMARY KEY(idImagem, idUsuario),
+    FOREIGN KEY(idImagem) REFERENCES Imagem(id) ON DELETE CASCADE,
+    FOREIGN KEY(idUsuario) REFERENCES Usuario(id) ON DELETE CASCADE
+);
+
+CREATE TABLE Notificacao (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    mensagem VARCHAR(255) NOT NULL,
+    lida BOOLEAN NOT NULL,
+    idImagem INTEGER NOT NULL,
+    idUsuario INTEGER NOT NULL,
+    FOREIGN KEY(idImagem) REFERENCES Imagem(id) ON DELETE CASCADE,
+    FOREIGN KEY(idUsuario) REFERENCES Usuario(id) ON DELETE CASCADE
+);
+
+CREATE TABLE Solicitacao (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    idImagem INTEGER NOT NULL,
+    idUsuario INTEGER NOT NULL,
+    descricao VARCHAR(255) NOT NULL,
+    aceita BOOLEAN,
+    FOREIGN KEY(idImagem) REFERENCES Imagem(id) ON DELETE CASCADE,
+    FOREIGN KEY(idUsuario) REFERENCES Usuario(id) ON DELETE CASCADE
+);
+
+CREATE TABLE Privilegio (
+    idUsuario INTEGER PRIMARY KEY,
+    visualizarTodas BOOLEAN NOT NULL,
+    excluirTodas BOOLEAN NOT NULL,
+    compartilharTodas BOOLEAN NOT NULL,
+    FOREIGN KEY(idUsuario) REFERENCES Usuario(id) ON DELETE CASCADE
+);
+
+COMMIT;
